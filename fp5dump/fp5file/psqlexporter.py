@@ -191,7 +191,7 @@ class PsqlExporter(Exporter):
                     if export_def.field_id not in table_fields_present:
                         output.write('ALTER TABLE "%s" DROP COLUMN  "%s";\n' % (self.table_name, export_def.field.label))
 
-        self.reset_locale()
+        # self.reset_locale()
 
         sys.stdout.flush()
         self.logging.info("exported %d records" % self.processed_records)
@@ -200,7 +200,12 @@ class PsqlExporter(Exporter):
         if type(value) is OrderedDict and b'\x01' in value and b'\xff\x00' in value:
             value = value[b'\x01'].decode(self.fp5file.encoding)
         else:
-            value = value.decode(self.fp5file.encoding)
+            try:
+                value = value.decode(self.fp5file.encoding)
+            except UnicodeDecodeError as e:
+                self.logging.error("Error decoding value '%s' for field '%s' in record %d: %s" % (value, export_def.field.label, self.processed_records, e))
+                value = ""
+                
 
         if value is None:
             self.output.write("NULL")

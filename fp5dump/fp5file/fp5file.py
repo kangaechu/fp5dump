@@ -227,8 +227,8 @@ class FP5File(object):
                                    encoding="latin1"):
 
         try:
-            locale.setlocale(locale.LC_NUMERIC, use_locale)
-            locale.resetlocale(locale.LC_NUMERIC)
+            # locale.setlocale(locale.LC_NUMERIC, use_locale)
+            # locale.resetlocale(locale.LC_NUMERIC)
 
             self.locale = use_locale
 

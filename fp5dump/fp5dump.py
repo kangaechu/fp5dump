@@ -80,10 +80,10 @@ def __dump_records__(args):
 
             return True
 
-        if fp5file.records_count == 0:
-            logging.warning("no records to dump")
+        # if fp5file.records_count == 0:
+        #     logging.warning("no records to dump")
 
-            return True
+        #     return True
 
         return fp5file.dump_records_pgsql(fields_to_dump,
                                           filename=args.output,
