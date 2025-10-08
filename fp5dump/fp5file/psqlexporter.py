@@ -117,7 +117,7 @@ class PsqlExporter(Exporter):
                     # Start new INSERT statement every 1000 records
                     # processed_records was already incremented, so check if previous record was 1000th
                     if (self.processed_records - 1) % 1000 == 0:
-                        output.write(');\n\n' + self.insert_statement + '(')
+                        output.write(');\n\n' + self.insert_statement)
                     else:
                         output.write('),\n(')
                 is_first_record = False
