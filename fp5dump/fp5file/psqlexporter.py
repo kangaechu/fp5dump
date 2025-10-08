@@ -114,8 +114,10 @@ class PsqlExporter(Exporter):
                 mod_id = int.from_bytes(record_tokens[b'\xfc'], byteorder='big') if b'\xfc' in record_tokens else 0
 
                 if not is_first_record:
-                    if self.processed_records % 1000 == 1:
-                        output.write('),\n\n' + self.insert_statement + '(')
+                    # Start new INSERT statement every 1000 records
+                    # processed_records was already incremented, so check if previous record was 1000th
+                    if (self.processed_records - 1) % 1000 == 0:
+                        output.write(');\n\n' + self.insert_statement + '(')
                     else:
                         output.write('),\n(')
                 is_first_record = False
