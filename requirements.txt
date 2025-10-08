@@ -1,0 +1,4 @@
+psycopg2>=2.5.4
+psycopg2-binary>=2.5.4
+PyYAML>=3.11
+parsedatetime>=1.4

@@ -104,6 +104,7 @@ class PsqlExporter(Exporter):
 
             self.output.write(self.insert_statement)
 
+            is_first_record = True
             for (record_id_bin, record_tokens) in self.fp5file.data.sub_nodes(b'\x05', start_node_path=start_node_path, token_ids_to_return=token_ids_to_return):
                 # progress counter
                 self.update_progress()
@@ -111,6 +112,13 @@ class PsqlExporter(Exporter):
                 # get basic record infos
                 record_id = decode_vli(record_id_bin)
                 mod_id = int.from_bytes(record_tokens[b'\xfc'], byteorder='big') if b'\xfc' in record_tokens else 0
+
+                if not is_first_record:
+                    if self.processed_records % 1000 == 1:
+                        output.write('),\n\n' + self.insert_statement + '(')
+                    else:
+                        output.write('),\n(')
+                is_first_record = False
 
                 output.write("%d, " % record_id)
 
@@ -181,10 +189,8 @@ class PsqlExporter(Exporter):
                 else:
                     output.write("%d" % mod_id)
 
-                if self.processed_records == self.records_to_process_count:
-                    output.write(');\n\n')
-                else:
-                    output.write('),\n(' if self.processed_records % 1000 != 0 else ');\n\n' + self.insert_statement)
+            # Close the INSERT statement after all records have been processed
+            output.write(');\n\n')
 
             if self.drop_empty_columns:
                 for export_def in self.export_definition.values():
